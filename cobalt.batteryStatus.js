@@ -1,6 +1,9 @@
 (function (cobalt) {
     var plugin = {
-        name: 'batteryStatus',
+        classes: {
+			ios: "CobaltBatteryStatusPlugin",
+            android: "io.kristal.batterystatusplugin.BatteryStatusPlugin"
+        },
         defaultHandlers: {
             onStateChanged: function (state) {
                 cobalt.log('Battery state changed: ' + state);
@@ -62,7 +65,7 @@
                     break;
 
                 default:
-                    cobalt.log(this.name, ': unknown action ', json.action);
+                    cobalt.log('Battery plugin : unknown action ', json.action);
                     break;
             }
         }
