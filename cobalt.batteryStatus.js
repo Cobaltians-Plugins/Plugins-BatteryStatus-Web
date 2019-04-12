@@ -27,15 +27,15 @@
             if (options)
                 this.defineCallbacks(options);
 
-            this.send('startStateMonitoring');
+            cobalt.plugins.send(this, 'startStateMonitoring');
         },
 
         stopMonitoring: function () {
-            this.send('stopStateMonitoring');
+            cobalt.plugins.send(this, 'stopStateMonitoring');
         },
 
         getLevel: function (callback) {
-            this.send('getLevel', {}, function (data) {
+            cobalt.plugins.send(this, 'getLevel', {}, function (data) {
                 if (typeof callback == 'function')
                     callback(data.level);
                 else
@@ -44,7 +44,7 @@
         },
 
         getState: function (callback) {
-            this.send('getState', {}, function (data) {
+            cobalt.plugins.send(this, 'getState', {}, function (data) {
                 if (typeof callback == 'function')
                     callback(data.state);
                 else
@@ -65,10 +65,6 @@
                     cobalt.log(this.name, ': unknown action ', json.action);
                     break;
             }
-        },
-
-        send: function (action, data, callback) {
-            cobalt.send({ type: 'plugin', name: this.name, action: action, data: data }, callback);
         }
     };
 
