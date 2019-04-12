@@ -1,13 +1,11 @@
 (function (cobalt) {
     var plugin = {
         name: 'batteryStatus',
-
         defaultHandlers: {
             onStateChanged: function (state) {
                 cobalt.log('Battery state changed: ' + state);
             }
         },
-
         state: {
             FULL: 'full',
             CHARGING: 'charging',
@@ -15,8 +13,7 @@
             LOW: 'low',
             UNKNOWN: 'unknown'
         },
-
-        init: function (options) {
+        init: function () {
             cobalt.batteryStatus = {
                 getLevel: this.getLevel.bind(this),
                 getState: this.getState.bind(this),
@@ -25,15 +22,7 @@
                 onStateChanged: this.defaultHandlers.onStateChanged,
                 state: this.state
             };
-
-            this.defineCallbacks(options);
         },
-
-        defineCallbacks: function (options) {
-            if (options && typeof options.onStateChanged == 'function')
-                cobalt.batteryStatus.onStateChanged = options.onStateChanged;
-        },
-
         startMonitoring: function (options) {
             if (options)
                 this.defineCallbacks(options);
