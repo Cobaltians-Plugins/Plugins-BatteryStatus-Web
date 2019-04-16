@@ -8,6 +8,12 @@
     defaultHandlers: {
       onStateChanged: function(state) {
         cobalt.log('Battery state changed: ' + state);
+      },
+      onStateReceived: function(state) {
+        cobalt.log('Battery state received: ' + state);
+      },
+      onLevelReceived: function(level) {
+        cobalt.log('Battery level received: ' + level);
       }
     },
     state: {
@@ -24,8 +30,23 @@
         startMonitoring: this.startMonitoring.bind(this),
         stopMonitoring: this.stopMonitoring.bind(this),
         onStateChanged: this.defaultHandlers.onStateChanged,
+        onStateReceived: this.defaultHandlers.onStateReceived,
+        onLevelReceived: this.defaultHandlers.onLevelReceived,
         state: this.state
       };
+    },
+    defineCallbacks: function(options) {
+      if (options) {
+        if (typeof options.onStateChanged === 'function') {
+          cobalt.batteryStatus.onStateChanged = options.onStateChanged;
+        }
+        if (typeof options.onStateReceived === 'function') {
+          cobalt.batteryStatus.onStateReceived = options.onStateReceived;
+        }
+        if (typeof options.onLevelReceived === 'function') {
+          cobalt.batteryStatus.onLevelReceived = options.onLevelReceived;
+        }
+      }
     },
     startMonitoring: function(options) {
       if (options)
@@ -39,34 +60,35 @@
     },
 
     getLevel: function(callback) {
-      cobalt.plugins.send(this, 'getLevel', {}, function(data) {
-        if (typeof callback == 'function')
-          callback(data.level);
-        else
-          cobalt.log('Received battery level: ', data.level);
-      });
+      if (callback){
+        cobalt.batteryStatus.onLevelReceived = callback;
+      }
+      cobalt.plugins.send(this, 'getLevel', {});
     },
 
     getState: function(callback) {
-      cobalt.plugins.send(this, 'getState', {}, function(data) {
-        if (typeof callback == 'function')
-          callback(data.state);
-        else
-          cobalt.log('Received battery state: ', data.state);
-      });
+      if (callback) {
+        cobalt.batteryStatus.onStateReceived = callback;
+      }
+      cobalt.plugins.send(this, 'getState', {});
     },
 
     handleEvent: function(json) {
       switch (json && json.action) {
         case 'onStateChanged':
-          if (typeof cobalt.batteryStatus.onStateChanged == 'function')
+          if (typeof cobalt.batteryStatus.onStateChanged === 'function'){
             cobalt.batteryStatus.onStateChanged(json.data.state);
-          else
-            this.defaultHandlers.onStateChanged(json.data.state);
+          }
           break;
-
-        default:
-          cobalt.log('Battery plugin : unknown action ', json.action);
+        case 'onState':
+          if (typeof cobalt.batteryStatus.onStateReceived === 'function') {
+            cobalt.batteryStatus.onStateReceived(json.data.state);
+          }
+          break;
+        case 'onLevel':
+          if (typeof cobalt.batteryStatus.onLevelReceived === 'function') {
+            cobalt.batteryStatus.onLevelReceived(json.data.level);
+          }
           break;
       }
     }
