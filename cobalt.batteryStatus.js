@@ -93,6 +93,6 @@
       }
     }
   };
-
   cobalt.plugins.register(plugin);
 })(cobalt || {});
+ 
