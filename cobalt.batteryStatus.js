@@ -74,7 +74,7 @@
     },
 
     handleEvent: function(json) {
-      switch (json && json.action) {
+      switch (json && json.data && json.data.action) {
         case 'onStateChanged':
           if (typeof cobalt.batteryStatus.onStateChanged === 'function'){
             cobalt.batteryStatus.onStateChanged(json.data.state);
@@ -93,6 +93,6 @@
       }
     }
   };
+
   cobalt.plugins.register(plugin);
 })(cobalt || {});
- 
