@@ -73,21 +73,21 @@
       cobalt.plugins.send(this, 'getState', {});
     },
 
-    handleEvent: function(json) {
-      switch (json && json.data && json.data.action) {
+    handleEvent: function(data) {
+      switch (data.action) {
         case 'onStateChanged':
           if (typeof cobalt.batteryStatus.onStateChanged === 'function'){
-            cobalt.batteryStatus.onStateChanged(json.data.state);
+            cobalt.batteryStatus.onStateChanged(data.state);
           }
           break;
         case 'onState':
           if (typeof cobalt.batteryStatus.onStateReceived === 'function') {
-            cobalt.batteryStatus.onStateReceived(json.data.state);
+            cobalt.batteryStatus.onStateReceived(data.state);
           }
           break;
         case 'onLevel':
           if (typeof cobalt.batteryStatus.onLevelReceived === 'function') {
-            cobalt.batteryStatus.onLevelReceived(json.data.level);
+            cobalt.batteryStatus.onLevelReceived(data.level);
           }
           break;
       }
