@@ -49,9 +49,7 @@
       }
     },
     startMonitoring: function(options) {
-      if (options)
-        this.defineCallbacks(options);
-
+      this.defineCallbacks(options);
       cobalt.plugins.send(this, 'startStateMonitoring');
     },
 
@@ -60,23 +58,19 @@
     },
 
     getLevel: function(callback) {
-      if (callback){
-        cobalt.batteryStatus.onLevelReceived = callback;
-      }
-      cobalt.plugins.send(this, 'getLevel', {}, function(data){ cobalt.batteryStatus.onLevelReceived(data.level);});
+      this.defineCallbacks({ onLevelReceived: callback });
+      cobalt.plugins.send(this, 'getLevel', {}, cobalt.batteryStatus.onLevelReceived);
     },
 
     getState: function(callback) {
-      if (callback) {
-        cobalt.batteryStatus.onStateReceived = callback;
-      }
-      cobalt.plugins.send(this, 'getState', {}, function(data){ cobalt.batteryStatus.onStateReceived(data.state);});
+      this.defineCallbacks({ onStateReceived: callback });
+      cobalt.plugins.send(this, 'getState', {}, cobalt.batteryStatus.onStateReceived);
     },
-    handleEvent: function(data) {
-      switch (data.action) {
+    handleEvent: function(event) {
+      switch (event.action) {
         case 'onStateChanged':
           if (typeof cobalt.batteryStatus.onStateChanged === 'function'){
-            cobalt.batteryStatus.onStateChanged(data.state);
+            cobalt.batteryStatus.onStateChanged(event.data);
           }
           break;
       }
